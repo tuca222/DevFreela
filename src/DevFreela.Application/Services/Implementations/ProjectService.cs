@@ -18,6 +18,7 @@ namespace DevFreela.Application.Services.Implementations
             Project project = new Project(projectCreateInputModel.Title, projectCreateInputModel.Description, projectCreateInputModel.IdClient, projectCreateInputModel.IdFreelancer, projectCreateInputModel.TotalCost);
 
             _dbContext.Projects.Add(project);
+            _dbContext.SaveChanges();
 
             return project.Id;
         }
@@ -27,6 +28,8 @@ namespace DevFreela.Application.Services.Implementations
             ProjectComment comment = new ProjectComment(commentCreateInputModel.Content, commentCreateInputModel.IdProject, commentCreateInputModel.IdUser);
 
             _dbContext.ProjectComments.Add(comment);
+
+            _dbContext.SaveChanges();
         }
 
         public void Delete(int id)
@@ -34,6 +37,8 @@ namespace DevFreela.Application.Services.Implementations
             Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
 
             project.Cancel();
+
+            _dbContext.SaveChanges();
         }
 
         public void Finish(int id)
@@ -42,11 +47,12 @@ namespace DevFreela.Application.Services.Implementations
 
             project.Finish();
 
+            _dbContext.SaveChanges();
         }
 
         public List<ProjectViewModel> GetAll(string query)
         {
-            List<Project> projects = _dbContext.Projects;
+            var projects = _dbContext.Projects;
 
             var projectsViewModel = projects
                 .Select(p => new ProjectViewModel(p.Id, p.Title, p.CreatedAt))
@@ -76,12 +82,16 @@ namespace DevFreela.Application.Services.Implementations
             Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
 
             project.Start();
+
+            _dbContext.SaveChanges();
         }
         public void Update(UpdateProjectInputModel projectUpdateInputModel)
         {
             Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == projectUpdateInputModel.Id);
 
             project.Update(projectUpdateInputModel.Title, projectUpdateInputModel.Description, projectUpdateInputModel.TotalCost);
+
+            _dbContext.SaveChanges();
         }
     }
 }

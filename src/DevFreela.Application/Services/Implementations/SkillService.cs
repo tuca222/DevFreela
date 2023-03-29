@@ -15,13 +15,13 @@ namespace DevFreela.Application.Services.Implementations
 
         public List<SkillViewModel> GetAll()
         {
-            List<Skill> skills = _dbContext.Skills;
+            var skills = _dbContext.Skills;
 
-            List<SkillViewModel> skillsViuewModel = skills
+            List<SkillViewModel> skillsViewModel = skills
                 .Select(s => new SkillViewModel(s.Id, s.Description))
                 .ToList();
 
-            return skillsViuewModel;
+            return skillsViewModel;
         }
     }
 }
