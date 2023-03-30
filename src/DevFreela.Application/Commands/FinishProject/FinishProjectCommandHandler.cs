@@ -8,23 +8,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DevFreela.Application.Commands.DeleteProject
+namespace DevFreela.Application.Commands.FinishProject
 {
-    public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand, Unit>
+    public class FinishProjectCommandHandler : IRequestHandler<FinishProjectCommand, Unit>
     {
         private readonly DevFreelaDbContext _dbContext;
-        public DeleteProjectCommandHandler(DevFreelaDbContext dbContext)
+        public FinishProjectCommandHandler(DevFreelaDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-
-        public async Task<Unit> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(FinishProjectCommand request, CancellationToken cancellationToken)
         {
             Project project = await _dbContext.Projects.SingleOrDefaultAsync(p => p.Id == request.Id);
 
-            project.Cancel();
+            project.Finish();
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(); //ASYNC OU NAO (DUVIDA)
 
             return Unit.Value;
         }

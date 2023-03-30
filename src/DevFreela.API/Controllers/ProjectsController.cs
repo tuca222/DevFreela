@@ -2,6 +2,8 @@
 using DevFreela.Application.Commands.CreateComment;
 using DevFreela.Application.Commands.CreateProject;
 using DevFreela.Application.Commands.DeleteProject;
+using DevFreela.Application.Commands.FinishProject;
+using DevFreela.Application.Commands.StartProject;
 using DevFreela.Application.Commands.UpdateProject;
 using DevFreela.Application.InputModels;
 using DevFreela.Application.Services.Interfaces;
@@ -93,17 +95,23 @@ namespace DevFreela.API.Controllers
 
         //api/projetcs/1/start
         [HttpPut("{id}/start")]
-        public IActionResult Start(int id)
+        public async Task<IActionResult> Start(int id)
         {
-            _projectService.Start(id);
+            StartProjectCommand command = new StartProjectCommand(id);
+
+            await _mediator.Send(command);
+
             return NoContent();
         }
 
         //api/projects/1/finish
         [HttpPut("{id}/finish")]
-        public IActionResult Finish(int id)
+        public async Task<IActionResult> Finish(int id)
         {
-            _projectService.Finish(id);
+            FinishProjectCommand command = new FinishProjectCommand(id);
+
+            await _mediator.Send(command);
+
             return NoContent();
         }
     }

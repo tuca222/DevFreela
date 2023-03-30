@@ -48,14 +48,14 @@ namespace DevFreela.Application.Services.Implementations
         //    _dbContext.SaveChanges();
         //}
 
-        public void Finish(int id)
-        {
-            Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
+        //public void Finish(int id)
+        //{
+        //    Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
 
-            project.Finish();
+        //    project.Finish();
 
-            _dbContext.SaveChanges();
-        }
+        //    _dbContext.SaveChanges();
+        //}
 
         public List<ProjectViewModel> GetAll(string query)
         {
@@ -89,23 +89,24 @@ namespace DevFreela.Application.Services.Implementations
                 project.Freelancer.FullName
                 );
         }
-        public void Start(int id)
-        {
-            Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
+        //public void Start(int id)
+        //{
+        //    Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
 
-            project.Start();
+        //    project.Start();
 
-            //_dbContext.SaveChanges();
+        //    //_dbContext.SaveChanges();
 
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                sqlConnection.Open();
+        //    using (var sqlConnection = new SqlConnection(_connectionString))
+        //    {
+        //        sqlConnection.Open();
 
-                var script = "UPDATE Projects SET Status = @status, StartedAt = @startedat WHERE Id = @id";
+        //        var script = "UPDATE Projects SET Status = @status, StartedAt = @startedat WHERE Id = @id";
 
-                sqlConnection.Execute(script, new { status = project.Status, startedat = project.StartedAt, id});
-            }
-        }
+        //        sqlConnection.Execute(script, new { status = project.Status, startedat = project.StartedAt, id});
+        //    }
+        //}
+
         //public void Update(UpdateProjectInputModel projectUpdateInputModel)
         //{
         //    Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == projectUpdateInputModel.Id);
