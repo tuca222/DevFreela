@@ -1,17 +1,23 @@
-﻿using DevFreela.Application.InputModels;
+﻿using Dapper;
+using DevFreela.Application.InputModels;
 using DevFreela.Application.Services.Interfaces;
 using DevFreela.Application.ViewModels;
 using DevFreela.Core.Entities;
 using DevFreela.Infrastructure.Persistence;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace DevFreela.Application.Services.Implementations
 {
     public class ProjectService : IProjectService
     {
         private readonly DevFreelaDbContext _dbContext;
-        public ProjectService(DevFreelaDbContext dbContext)
+        private readonly string _connectionString;
+        public ProjectService(DevFreelaDbContext dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext;
+            _connectionString = configuration.GetConnectionString("DevFreelaCs");
         }
         public int Create(NewProjectInputModel projectCreateInputModel)
         {
@@ -63,7 +69,10 @@ namespace DevFreela.Application.Services.Implementations
 
         public ProjectDetailsViewModel GetById(int id)
         {
-            Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
+            Project project = _dbContext.Projects
+                .Include(p => p.Client)
+                .Include(p => p.Freelancer)
+                .SingleOrDefault(p => p.Id == id);
 
             if (project == null)
                 return null;
@@ -74,7 +83,9 @@ namespace DevFreela.Application.Services.Implementations
                 project.Description,
                 project.TotalCost,
                 project.StartedAt,
-                project.FinishedAt
+                project.FinishedAt,
+                project.Client.FullName,
+                project.Freelancer.FullName
                 );
         }
         public void Start(int id)
@@ -83,7 +94,16 @@ namespace DevFreela.Application.Services.Implementations
 
             project.Start();
 
-            _dbContext.SaveChanges();
+            //_dbContext.SaveChanges();
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                var script = "UPDATE Projects SET Status = @status, StartedAt = @startedat WHERE Id = @id";
+
+                sqlConnection.Execute(script, new { status = project.Status, startedat = project.StartedAt, id});
+            }
         }
         public void Update(UpdateProjectInputModel projectUpdateInputModel)
         {
