@@ -1,4 +1,5 @@
 ﻿using DevFreela.Core.Enums;
+using DevFreela.Core.Exceptions;
 
 namespace DevFreela.Core.Entities
 {
