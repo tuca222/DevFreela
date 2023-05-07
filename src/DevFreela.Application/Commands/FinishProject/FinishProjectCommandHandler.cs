@@ -1,4 +1,5 @@
 ﻿using DevFreela.Core.Entities;
+using DevFreela.Core.Repositories;
 using DevFreela.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,18 @@ namespace DevFreela.Application.Commands.FinishProject
 {
     public class FinishProjectCommandHandler : IRequestHandler<FinishProjectCommand, Unit>
     {
-        private readonly DevFreelaDbContext _dbContext;
-        public FinishProjectCommandHandler(DevFreelaDbContext dbContext)
+        private readonly IProjectRepository _projectRepository;
+        public FinishProjectCommandHandler(IProjectRepository projectRepository)
         {
-            _dbContext = dbContext;
+            _projectRepository = projectRepository;
         }
         public async Task<Unit> Handle(FinishProjectCommand request, CancellationToken cancellationToken)
         {
-            Project project = await _dbContext.Projects.SingleOrDefaultAsync(p => p.Id == request.Id);
+            Project project = await _projectRepository.GetByIdAsync(request.Id);
 
             project.Finish();
 
-            await _dbContext.SaveChangesAsync(); //ASYNC OU NAO (DUVIDA)
+            await _projectRepository.SaveChangesAsync();
 
             return Unit.Value;
         }
